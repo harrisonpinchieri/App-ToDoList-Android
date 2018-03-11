@@ -1,8 +1,10 @@
 package todolist.cursoandroid.com.todolist;
 
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> itens;
     private ArrayList<Integer> ids;
 
-    
+    private AlertDialog.Builder dialog;
 
 
     @Override
@@ -161,13 +163,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void removerTarefa(Integer id){
+    private void removerTarefa(final Integer id){
 
         try{
 
-            bancoDados.execSQL("DELETE FROM tarefas WHERE id="+id);
-            recuperarTarefas();
-            Toast.makeText(MainActivity.this,"Tarefa removida",Toast.LENGTH_SHORT).show();
+
+            dialog = new AlertDialog.Builder(MainActivity.this);
+
+            dialog.setTitle("ATENÇÃO");
+
+            dialog.setMessage("Deseja remover a tarefa?");
+
+            dialog.setCancelable(false);
+
+            dialog.setIcon(android.R.drawable.ic_dialog_alert);
+
+
+            dialog.setNegativeButton("NÃO",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+
+            dialog.setPositiveButton("SIM",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            bancoDados.execSQL("DELETE FROM tarefas WHERE id="+id);
+                            recuperarTarefas();
+                            Toast.makeText(MainActivity.this,"Tarefa removida",Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+            dialog.create();
+            dialog.show();
+
+
 
         }catch(Exception e){
 
